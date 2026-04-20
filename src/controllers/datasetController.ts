@@ -1,7 +1,28 @@
 import { Request, Response } from 'express';
 import { createSnapshot } from '../services/snapshotService';
 import { analyzeRootCause } from '../services/rootCauseService';
+import { OpenMetadataService } from '../services/openMetadataService';
 import prisma from '../utils/prisma';
+
+export const listDatasets = async (req: Request, res: Response) => {
+  try {
+    const datasets = await OpenMetadataService.listDatasets();
+    return res.status(200).json({
+      message: 'Datasets fetched from OpenMetadata successfully',
+      data: datasets,
+    });
+  } catch (error: any) {
+    console.warn(`[Controller] OpenMetadata API unavailable. Falling back to local demo list.`);
+    // Fallback dummy dataset list
+    return res.status(200).json({
+      message: 'Fallback datasets fetched successfully',
+      data: [
+        { id: 'demo-1', name: 'demo_transactions', fullyQualifiedName: 'demo_transactions' },
+        { id: 'demo-2', name: 'user_analytics', fullyQualifiedName: 'user_analytics' }
+      ],
+    });
+  }
+};
 
 export const triggerSnapshot = async (req: Request, res: Response) => {
   const datasetName = req.params.datasetName as string;

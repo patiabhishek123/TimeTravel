@@ -4,13 +4,17 @@ import {
   triggerSnapshot,
   getDatasetTimeline,
   getDatasetSnapshots,
-  getRootCauseAnalysis
+  getRootCauseAnalysis,
+  listDatasets
 } from '../controllers/datasetController';
 
 const router = Router();
 
 // Health check
 router.get('/health', checkHealth);
+
+// Datasets list
+router.get('/datasets', listDatasets);
 
 // Dataset Metadata Snapshot & Timeline endpoints
 router.post('/snapshot/:datasetName', triggerSnapshot);
