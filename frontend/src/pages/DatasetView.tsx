@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export default function DatasetView() {
   const [datasetId, setDatasetId] = useState('');
@@ -14,24 +15,33 @@ export default function DatasetView() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
-      <h1 style={{ fontSize: '3rem', marginBottom: '1rem', background: 'linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', textAlign: 'center' }}>
-        Time Travel Debugger
-      </h1>
-      <p style={{ color: 'var(--text-muted)', marginBottom: '3rem', fontSize: '1.2rem' }}>Track and debug metadata schema and lineage changes over time.</p>
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="flex flex-col items-center justify-center min-h-[70vh] max-w-2xl mx-auto text-center"
+    >
+      <div className="mb-8 relative w-full">
+        <div className="absolute inset-0 blur-3xl opacity-20 bg-gradient-to-r from-om-lineage to-om-schema rounded-full"></div>
+        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4 relative z-10 text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">
+          Metadata Time-Travel
+        </h1>
+        <p className="text-slate-400 text-lg relative z-10">
+          Proactively debug broken pipelines by inspecting schema evolution and lineage changes.
+        </p>
+      </div>
       
-      <form onSubmit={handleSubmit} className="glass-panel" style={{ padding: '2rem', display: 'flex', gap: '1rem', width: '100%', maxWidth: '600px' }}>
+      <form onSubmit={handleSubmit} className="glass-panel p-6 w-full flex flex-col md:flex-row gap-4 relative z-10">
         <input 
           type="text" 
           value={datasetId} 
           onChange={e => setDatasetId(e.target.value)} 
-          placeholder="Enter Dataset ID (e.g. your-uuid-here)" 
-          style={{ flex: 1, padding: '12px 16px', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'rgba(0,0,0,0.2)', color: 'white', fontSize: '1rem', outline: 'none' }}
+          placeholder="Enter Dataset ID (UUID)..." 
+          className="flex-1 bg-slate-950 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-om-lineage transition-colors"
         />
-        <button type="submit" className="btn-primary">
+        <button type="submit" className="bg-om-lineage hover:bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg flex items-center justify-center gap-2 transition-colors">
           <Search size={18} /> Investigate
         </button>
       </form>
-    </div>
+    </motion.div>
   );
 }

@@ -13,3 +13,13 @@ export interface RootCauseResult {
   confidence: number;
   relatedEvents: MetadataChangeEvent[];
 }
+
+export interface MetadataSnapshot {
+  id: string;
+  datasetId: string;
+  schema: any;
+  columns: any;
+  lineage: any;
+  createdAt: string;
+  events?: MetadataChangeEvent[];
+}
