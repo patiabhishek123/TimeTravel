@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import { MetadataSnapshot } from '../../types';
-import { motion } from 'framer-motion';
 
 interface Props {
   currentSnapshot: MetadataSnapshot;
@@ -8,7 +7,6 @@ interface Props {
 }
 
 export default function MetadataDiff({ currentSnapshot, previousSnapshot }: Props) {
-  // A naive but visually effective string-diffing for hackathon purposes
   const diffs = useMemo(() => {
     const buildView = (oldObj: any, newObj: any) => {
       const oldLines = JSON.stringify(oldObj || {}, null, 2).split('\n');
@@ -16,7 +14,6 @@ export default function MetadataDiff({ currentSnapshot, previousSnapshot }: Prop
       
       const oldView = oldLines.map(line => {
         const isRemoved = !newLines.includes(line);
-        // Approximation of change vs remove
         const isChanged = isRemoved && newLines.some(nLine => nLine.split(':')[0] === line.split(':')[0] && nLine !== line);
         return { 
           line, 
@@ -44,43 +41,46 @@ export default function MetadataDiff({ currentSnapshot, previousSnapshot }: Prop
   }, [currentSnapshot, previousSnapshot]);
 
   const renderPanel = (title: string, view: { line: string, status: string }[], type: 'prev' | 'curr') => (
-    <div className="flex-1 bg-om-bg border-2 border-om-secondary overflow-hidden flex flex-col scanline-effect relative">
-      <div className="bg-om-secondary px-4 py-2 border-b-2 border-om-primary text-xs font-bold text-om-bg uppercase tracking-widest flex justify-between z-10">
-        <span>[{title}]</span>
-        <span className={type === 'prev' ? 'text-[#ffcccc]' : 'text-[#ccffcc]'}>
-          {type === 'prev' ? 'SYS.PREV_STATE' : 'SYS.CURR_STATE'}
+    <div className="flex-1 bg-vercel-bg border border-vercel-border rounded-xl overflow-hidden flex flex-col shadow-sm">
+      <div className="bg-[#141414] px-4 py-3 border-b border-vercel-border text-xs font-semibold text-vercel-muted flex justify-between items-center">
+        <span className="uppercase tracking-wider">{title}</span>
+        <span className={`px-2 py-0.5 rounded text-[10px] font-medium ${type === 'prev' ? 'bg-status-removed-bg text-status-removed' : 'bg-status-added-bg text-status-added'}`}>
+          {type === 'prev' ? 'PREVIOUS' : 'CURRENT'}
         </span>
       </div>
-      <motion.div 
-        animate={{ opacity: [1, 0.8, 1, 0.9, 1] }}
-        transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
-        className="p-4 overflow-auto custom-scrollbar flex-1 font-mono text-[11px] md:text-xs leading-relaxed z-10"
-      >
+      <div className="p-4 overflow-auto custom-scrollbar flex-1 font-mono text-xs leading-relaxed bg-[#0A0A0A]">
         {view.map((item, i) => {
           let bg = 'bg-transparent';
-          let text = 'text-om-text opacity-70';
+          let text = 'text-[#D4D4D4]';
           let border = 'border-transparent';
-          if (item.status === 'added') { bg = 'bg-om-added/30'; text = 'text-[#00ff00] font-bold'; border = 'border-[#00ff00]'; }
-          if (item.status === 'removed') { bg = 'bg-om-removed/40'; text = 'text-om-primary font-bold'; border = 'border-om-primary'; }
-          if (item.status === 'changed') { bg = 'bg-om-secondary/40'; text = 'text-om-primary font-bold'; border = 'border-om-primary'; }
+          if (item.status === 'added') { bg = 'bg-status-added-bg'; text = 'text-status-added'; border = 'border-status-added'; }
+          if (item.status === 'removed') { bg = 'bg-status-removed-bg'; text = 'text-status-removed'; border = 'border-status-removed'; }
+          if (item.status === 'changed') { bg = 'bg-status-changed-bg'; text = 'text-status-changed'; border = 'border-status-changed'; }
           
           return (
-            <div key={i} className={`px-2 py-0.5 whitespace-pre ${bg} ${text} border-l-2 ${border} hover:bg-om-secondary/20 transition-colors`}>
+            <div key={i} className={`px-3 py-0.5 whitespace-pre ${bg} ${text} border-l-2 ${border} hover:bg-[#1A1A1A] transition-colors rounded-r-sm`}>
               {item.line}
             </div>
           );
         })}
-      </motion.div>
+      </div>
     </div>
   );
 
   return (
-    <div className="glass-panel p-6 flex flex-col h-[600px] border-r-0 border-b-4 border-b-om-primary">
-      <h3 className="text-sm font-bold text-om-primary tracking-widest mb-6">[ DIFF VIEWER TERMINAL ]</h3>
+    <div className="glass-panel p-6 flex flex-col h-full bg-[#0F0F0F]">
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-sm font-semibold text-white">Metadata Diff Viewer</h3>
+        <div className="flex gap-4 text-[10px] font-medium uppercase tracking-wider">
+          <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-status-added"></span> Added</span>
+          <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-status-removed"></span> Removed</span>
+          <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-status-changed"></span> Changed</span>
+        </div>
+      </div>
       
-      <div className="flex-1 flex gap-4 overflow-hidden">
-        {renderPanel('METADATA.COLUMNS', diffs.columns.oldView, 'prev')}
-        {renderPanel('METADATA.COLUMNS', diffs.columns.newView, 'curr')}
+      <div className="flex-1 flex gap-4 overflow-hidden min-h-[500px]">
+        {renderPanel('Columns State', diffs.columns.oldView, 'prev')}
+        {renderPanel('Columns State', diffs.columns.newView, 'curr')}
       </div>
     </div>
   );

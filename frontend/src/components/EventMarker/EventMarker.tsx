@@ -13,30 +13,19 @@ export default function EventMarker({ event, isActive, onClick }: Props) {
 
   const getColor = (type: string) => {
     switch (type) {
-      case 'COLUMN_REMOVED': return 'border-om-removed';
-      case 'COLUMN_ADDED': return 'border-om-added';
-      case 'SCHEMA_CHANGE': return 'border-om-primary';
-      case 'LINEAGE_CHANGE': return 'border-om-primary';
-      default: return 'border-om-secondary';
-    }
-  };
-
-  const getBgColor = (type: string) => {
-    switch (type) {
-      case 'COLUMN_REMOVED': return 'bg-om-removed/40';
-      case 'COLUMN_ADDED': return 'bg-om-added/40';
-      case 'SCHEMA_CHANGE': return 'bg-om-primary/40';
-      case 'LINEAGE_CHANGE': return 'bg-om-primary/40';
-      default: return 'bg-om-secondary/40';
+      case 'COLUMN_REMOVED': return 'bg-status-removed';
+      case 'COLUMN_ADDED': return 'bg-status-added';
+      case 'SCHEMA_CHANGE': return 'bg-status-changed';
+      case 'LINEAGE_CHANGE': return 'bg-white';
+      default: return 'bg-vercel-muted';
     }
   };
 
   const colorClass = getColor(event.changeType);
-  const bgClass = getBgColor(event.changeType);
 
   return (
     <div 
-      className="relative flex flex-col items-center group cursor-pointer shrink-0"
+      className="relative flex flex-col items-center group cursor-pointer shrink-0 z-10"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
@@ -44,31 +33,30 @@ export default function EventMarker({ event, isActive, onClick }: Props) {
       <AnimatePresence>
         {isHovered && (
           <motion.div
-            initial={{ opacity: 0, x: -5 }}
-            animate={{ opacity: [0, 1, 0.5, 1], x: [-5, 2, -2, 0] }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.2 }}
-            className="absolute bottom-full mb-3 w-56 bg-om-bg text-xs border border-om-primary shadow-glow z-50 p-3 pointer-events-none uppercase tracking-widest"
+            initial={{ opacity: 0, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.15 }}
+            className="absolute bottom-full mb-2 w-48 bg-white text-black text-xs rounded-lg shadow-soft z-50 p-2.5 pointer-events-none text-left"
           >
-            <p className="font-bold text-om-primary mb-1 truncate">[{event.changeType.replace('_', ' ')}]</p>
-            <p className="text-om-text truncate">{event.description}</p>
-            <p className="text-om-secondary mt-2 text-[10px]">{new Date(event.createdAt).toLocaleTimeString()}</p>
+            <p className="font-semibold mb-1 truncate text-[11px] uppercase tracking-wider">{event.changeType.replace('_', ' ')}</p>
+            <p className="text-gray-600 truncate">{event.description}</p>
           </motion.div>
         )}
       </AnimatePresence>
 
       <motion.div 
         layout
-        whileHover={{ scale: 1.3, rotate: [0, -5, 5, 0] }}
+        whileHover={{ scale: 1.2 }}
         animate={{ 
           scale: isActive ? 1.4 : 1,
-          boxShadow: isActive || isHovered ? `0 0 15px rgba(255,43,43,0.8)` : 'none'
+          boxShadow: isActive ? `0 0 0 4px rgba(255,255,255,0.1)` : 'none'
         }}
-        className={`w-4 h-4 border-2 ${colorClass} ${bgClass} z-10 transition-colors rounded-none scanline-effect`}
+        className={`w-2.5 h-2.5 rounded-full ${colorClass} transition-all`}
       />
       
-      <div className={`mt-2 text-[10px] font-bold transition-colors ${isActive ? 'text-white' : 'text-om-secondary group-hover:text-om-text'}`}>
-        {new Date(event.createdAt).toLocaleDateString()}
+      <div className={`absolute top-full mt-2 text-[10px] font-medium transition-colors whitespace-nowrap ${isActive ? 'text-white' : 'text-transparent group-hover:text-vercel-muted'}`}>
+        {event.changeType.replace('_', ' ')}
       </div>
     </div>
   );

@@ -2,33 +2,11 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RootCauseResult } from '../../types';
-import { Activity, AlertTriangle, Zap } from 'lucide-react';
+import { Activity, AlertTriangle, Zap, CheckCircle2 } from 'lucide-react';
 
 interface Props {
   datasetId: string;
 }
-
-const TypewriterText = ({ text }: { text: string }) => (
-  <motion.span
-    initial="hidden"
-    animate="visible"
-    variants={{
-      hidden: { opacity: 0 },
-      visible: { opacity: 1, transition: { staggerChildren: 0.02 } }
-    }}
-  >
-    {text.split("").map((char, index) => (
-      <motion.span key={index} variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}>
-        {char}
-      </motion.span>
-    ))}
-    <motion.span 
-      animate={{ opacity: [1, 0, 1] }} 
-      transition={{ repeat: Infinity, duration: 0.8 }}
-      className="inline-block w-2 h-4 bg-om-primary ml-1 align-middle"
-    />
-  </motion.span>
-);
 
 export default function RootCausePanel({ datasetId }: Props) {
   const [loading, setLoading] = useState(false);
@@ -38,7 +16,7 @@ export default function RootCausePanel({ datasetId }: Props) {
     setLoading(true);
     setResult(null);
     try {
-      await new Promise(r => setTimeout(r, 1500));
+      await new Promise(r => setTimeout(r, 1000));
       const response = await axios.get(`/api/analyze/${datasetId}`);
       setResult(response.data.data);
     } catch (error) {
@@ -49,18 +27,18 @@ export default function RootCausePanel({ datasetId }: Props) {
   };
 
   return (
-    <div className="glass-panel p-6 border-t-0 border-l-4 border-l-om-primary h-full">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-        <h2 className="text-xl font-bold text-om-primary flex items-center gap-2 uppercase tracking-widest">
-          <Zap className="text-om-primary" /> [ ROOT CAUSE ENGINE ]
+    <div className="glass-panel p-6 bg-[#0F0F0F] flex flex-col">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-sm font-semibold text-white flex items-center gap-2">
+          <Zap className="text-vercel-muted w-4 h-4" /> Root Cause Analysis
         </h2>
         <button 
           onClick={handleAnalyze} 
           disabled={loading}
-          className="bg-om-secondary hover:bg-om-primary border border-om-primary text-om-text px-4 py-2 font-bold flex items-center gap-2 transition-all uppercase tracking-widest shadow-glow"
+          className="bg-white hover:bg-gray-200 text-black px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors disabled:opacity-50 shadow-sm"
         >
-          {loading ? <Activity className="animate-spin" size={18} /> : <Activity size={18} />}
-          {loading ? 'ANALYZING...' : 'INITIATE SCAN'}
+          {loading ? <Activity className="animate-spin w-3.5 h-3.5" /> : <Activity className="w-3.5 h-3.5" />}
+          {loading ? 'Analyzing...' : 'Analyze'}
         </button>
       </div>
 
@@ -69,54 +47,69 @@ export default function RootCausePanel({ datasetId }: Props) {
           <motion.div 
             key="loading"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="flex flex-col items-center justify-center py-12 space-y-4"
+            className="flex flex-col items-center justify-center py-12 space-y-4 flex-1"
           >
-            <div className="text-om-primary text-2xl animate-pulse font-bold tracking-widest">
-              [ SCANNING METADATA ]
-            </div>
-            <p className="text-om-secondary font-mono text-sm uppercase opacity-80">Isolating anomalies...</p>
+            <div className="w-8 h-8 border-2 border-vercel-border border-t-white rounded-full animate-spin"></div>
+            <p className="text-vercel-muted text-xs font-medium">Scanning metadata anomalies...</p>
           </motion.div>
+        )}
+
+        {!loading && !result && (
+           <motion.div 
+           key="empty"
+           initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+           className="flex flex-col items-center justify-center py-12 text-center flex-1"
+         >
+           <Activity className="w-8 h-8 text-vercel-border mb-3" />
+           <p className="text-vercel-muted text-xs font-medium">Run analysis to detect pipeline issues automatically.</p>
+         </motion.div>
         )}
 
         {result && !loading && (
           <motion.div 
             key="result"
-            initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
-            className="space-y-8"
+            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+            className="space-y-6 flex-1"
           >
-            <div className="bg-om-bg border-2 border-om-primary p-5 flex items-start gap-4 shadow-glow-strong scanline-effect relative overflow-hidden">
-              <AlertTriangle className="text-om-primary shrink-0 w-8 h-8 relative z-10" />
-              <div className="relative z-10">
-                <p className="text-xs font-bold text-om-secondary uppercase tracking-widest mb-2"> FATAL EXCEPTION DETECTED</p>
-                <p className="text-om-text text-lg font-bold leading-relaxed uppercase">
-                  <TypewriterText text={result.probableCause} />
+            <div className={`p-4 rounded-xl border ${result.confidence > 0.8 ? 'bg-status-removed-bg border-status-removed/30' : 'bg-status-changed-bg border-status-changed/30'} flex items-start gap-3`}>
+              {result.confidence > 0.8 ? (
+                <AlertTriangle className="text-status-removed shrink-0 w-5 h-5 mt-0.5" />
+              ) : (
+                <CheckCircle2 className="text-status-changed shrink-0 w-5 h-5 mt-0.5" />
+              )}
+              <div>
+                <p className={`text-[10px] font-bold uppercase tracking-wider mb-1 ${result.confidence > 0.8 ? 'text-status-removed' : 'text-status-changed'}`}>
+                  Probable Cause
+                </p>
+                <p className="text-sm text-vercel-text font-medium leading-relaxed">
+                  {result.probableCause}
                 </p>
               </div>
             </div>
             
-            <div>
-              <div className="flex justify-between text-sm mb-2 uppercase tracking-widest">
-                <span className="text-om-secondary font-bold">CONFIDENCE SCORE</span>
-                <span className="text-om-primary font-bold">{(result.confidence * 100).toFixed(0)}%</span>
+            <div className="bg-vercel-panel p-4 rounded-xl border border-vercel-border">
+              <div className="flex justify-between text-xs mb-2">
+                <span className="text-vercel-muted font-medium">Confidence Score</span>
+                <span className="text-white font-medium">{(result.confidence * 100).toFixed(0)}%</span>
               </div>
-              <div className="w-full bg-om-bg border border-om-secondary h-4 overflow-hidden p-[1px]">
+              <div className="w-full bg-[#222] rounded-full h-1.5 overflow-hidden">
                 <motion.div 
                   initial={{ width: 0 }}
                   animate={{ width: `${result.confidence * 100}%` }}
-                  transition={{ duration: 1, delay: 0.2 }}
-                  className="h-full bg-om-primary shadow-glow"
+                  transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
+                  className={`h-full rounded-full ${result.confidence > 0.8 ? 'bg-status-removed' : 'bg-status-changed'}`}
                 />
               </div>
             </div>
 
             {result.relatedEvents.length > 0 && (
-              <div className="pt-6 border-t-2 border-om-secondary">
-                <p className="text-xs text-om-secondary font-bold uppercase tracking-widest mb-4">LINKED CORRUPTIONS</p>
-                <div className="space-y-3">
+              <div className="pt-2">
+                <p className="text-[10px] text-vercel-muted font-bold uppercase tracking-wider mb-3 px-1">Related Events</p>
+                <div className="space-y-2">
                   {result.relatedEvents.map((ev: any) => (
-                    <div key={ev.id} className="bg-om-bg p-3 border-l-4 border-om-secondary flex justify-between items-center hover:border-om-primary transition-colors cursor-pointer uppercase tracking-widest group">
-                      <span className="text-sm font-bold text-om-text group-hover:text-om-primary transition-colors">[{ev.changeType.replace('_', ' ')}]</span>
-                      <span className="text-xs text-om-secondary opacity-80">{new Date(ev.createdAt).toLocaleString()}</span>
+                    <div key={ev.id} className="bg-vercel-panel p-3 rounded-xl border border-vercel-border flex justify-between items-center text-xs">
+                      <span className="font-medium text-vercel-text">{ev.changeType.replace('_', ' ')}</span>
+                      <span className="text-vercel-muted">{new Date(ev.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                     </div>
                   ))}
                 </div>

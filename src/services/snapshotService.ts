@@ -1,5 +1,5 @@
 import prisma from '../utils/prisma';
-import { fetchDatasetMetadata } from './openMetadataService';
+import { OpenMetadataService } from './openMetadataService';
 import { ChangeType } from '@prisma/client';
 
 /**
@@ -24,7 +24,21 @@ export const createSnapshot = async (datasetIdOrName: string) => {
   // 1. Fetch metadata using the OpenMetadata service
   // Use the actual name of the dataset if we found it, otherwise use the provided string
   const datasetName = dataset ? dataset.name : datasetIdOrName;
-  const metadata = await fetchDatasetMetadata(datasetName);
+  
+  let metadata;
+  try {
+    const details = await OpenMetadataService.getDatasetDetails(datasetName);
+    const lineage = await OpenMetadataService.getLineage(datasetName);
+    
+    metadata = {
+      schema: details.tableSchema,
+      columns: details.columns,
+      lineage: lineage
+    };
+  } catch (error) {
+    console.warn(`[Snapshot Service] OpenMetadata API unavailable. Falling back to mock data for ${datasetName}.`);
+    metadata = OpenMetadataService.getMockMetadata(datasetName);
+  }
 
   if (!dataset) {
     dataset = await prisma.dataset.create({

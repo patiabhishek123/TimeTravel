@@ -15,61 +15,67 @@ export default function TimelineSlider({ snapshots, currentSnapshotIndex, onSele
   const containerRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div className="glass-panel p-6 overflow-hidden relative mb-8 z-10">
-      <h3 className="text-sm font-bold text-om-primary tracking-widest mb-6">[ TEMPORAL NAVIGATION ]</h3>
-      
+    <div className="relative py-2 z-10 w-full overflow-hidden">
       <div 
         ref={containerRef}
-        className="relative flex items-center min-w-full overflow-x-auto pb-8 pt-4"
+        className="relative flex items-center min-w-full overflow-x-auto pb-6 pt-4 px-4"
         style={{ scrollBehavior: 'smooth' }}
       >
-        <div className="absolute top-1/2 left-4 right-4 h-1 bg-om-secondary border-t border-b border-black -translate-y-1/2 z-0" />
+        <div className="absolute top-[22px] left-8 right-8 h-[2px] bg-vercel-border z-0" />
         
         <motion.div 
-          className="absolute top-1/2 left-4 h-1 bg-om-primary shadow-glow-strong -translate-y-1/2 z-0"
+          className="absolute top-[22px] left-8 h-[2px] bg-white z-0"
           initial={{ width: 0 }}
           animate={{ 
             width: snapshots.length > 1 
-              ? `calc(${(currentSnapshotIndex / (snapshots.length - 1)) * 100}% - 2rem)` 
+              ? `calc(${(currentSnapshotIndex / (snapshots.length - 1)) * 100}% - 4rem)` 
               : '0%' 
           }}
           transition={{ type: 'spring', stiffness: 100, damping: 20 }}
         />
 
-        <div className="flex items-center gap-8 md:gap-16 relative z-10 px-4 w-full justify-between">
+        <div className="flex items-center gap-12 md:gap-20 relative z-10 w-full justify-between">
           {snapshots.map((snapshot, idx) => {
             const isActive = idx <= currentSnapshotIndex;
             const isCurrent = idx === currentSnapshotIndex;
             const events = snapshot.events || [];
             
             return (
-              <div key={snapshot.id} className="flex items-center gap-8 shrink-0">
-                <motion.div 
-                  className="flex flex-col items-center cursor-pointer group"
-                  onClick={() => onSelectSnapshot(idx)}
-                  whileHover={{ x: [-1, 1, -1, 0] }}
-                >
+              <div key={snapshot.id} className="flex flex-col items-center shrink-0 relative">
+                {isCurrent && (
                   <motion.div 
-                    animate={isCurrent ? { scale: [1, 1.3, 1], opacity: [1, 0.7, 1] } : {}}
-                    transition={isCurrent ? { repeat: Infinity, duration: 1.5 } : {}}
-                    className={`w-5 h-5 z-10 transition-colors ${isActive ? 'bg-om-primary border border-white shadow-glow-strong' : 'bg-om-bg border border-om-secondary group-hover:border-om-primary group-hover:bg-om-secondary'}`}
+                    initial={{ height: 0 }} 
+                    animate={{ height: 40 }} 
+                    className="absolute top-6 left-1/2 w-[2px] bg-[#333] -translate-x-1/2 z-0"
                   />
-                  <span className={`mt-2 text-xs font-bold ${isCurrent ? 'text-white' : 'text-om-secondary'}`}>
-                    V{snapshots.length - idx}
-                  </span>
-                </motion.div>
+                )}
+                
+                <div className="flex items-center gap-6">
+                  <motion.div 
+                    className="flex flex-col items-center cursor-pointer group relative z-10"
+                    onClick={() => onSelectSnapshot(idx)}
+                  >
+                    <motion.div 
+                      animate={isCurrent ? { scale: 1.4 } : { scale: 1 }}
+                      className={`w-3.5 h-3.5 rounded-full z-10 transition-colors duration-200 shadow-sm ${isActive ? 'bg-white border-2 border-[#0A0A0A]' : 'bg-vercel-border border-2 border-[#0A0A0A] group-hover:bg-vercel-muted'}`}
+                    />
+                    <span className={`absolute top-full mt-2 text-[10px] font-medium whitespace-nowrap ${isCurrent ? 'text-white' : 'text-vercel-muted'}`}>
+                      {new Date(snapshot.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                    </span>
+                  </motion.div>
 
-                {events.map((event: MetadataChangeEvent) => (
-                  <EventMarker 
-                    key={event.id}
-                    event={event}
-                    isActive={selectedEventId === event.id}
-                    onClick={() => {
-                      onSelectSnapshot(idx);
-                      onSelectEvent(event);
-                    }}
-                  />
-                ))}
+                  {events.map((event: MetadataChangeEvent) => (
+                    <EventMarker 
+                      key={event.id}
+                      event={event}
+                      isActive={selectedEventId === event.id}
+                      onClick={() => {
+                        onSelectSnapshot(idx);
+                        onSelectEvent(event);
+                      }}
+                    />
+                  ))}
+                </div>
               </div>
             );
           })}

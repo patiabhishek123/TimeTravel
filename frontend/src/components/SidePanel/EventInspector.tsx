@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MetadataChangeEvent } from '../../types';
-import { X } from 'lucide-react';
+import { X, Info, FileJson, Clock } from 'lucide-react';
 
 interface Props {
   event: MetadataChangeEvent | null;
@@ -9,50 +9,57 @@ interface Props {
 }
 
 export default function EventInspector({ event, onClose }: Props) {
+  if (!event) {
+    return (
+      <div className="glass-panel p-8 flex flex-col items-center justify-center text-center h-48 border-dashed border-2 border-vercel-border bg-transparent">
+        <Info className="w-8 h-8 text-vercel-muted mb-3" />
+        <p className="text-vercel-muted text-sm font-medium">Select an event from the timeline to view details.</p>
+      </div>
+    );
+  }
+
   return (
-    <AnimatePresence>
-      {event && (
-        <motion.div
-          initial={{ x: '100%' }}
-          animate={{ x: 0 }}
-          exit={{ x: '100%' }}
-          transition={{ ease: "linear", duration: 0.15 }}
-          className="fixed top-0 right-0 h-full w-96 bg-[#0f0f0f] border-l-4 border-om-primary z-50 flex flex-col shadow-[-10px_0_20px_rgba(255,43,43,0.15)] uppercase tracking-widest scanline-effect"
-        >
-          <div className="p-4 border-b-2 border-om-secondary flex items-center justify-between bg-om-bg">
-            <h2 className="text-lg font-bold text-om-primary">[ EVENT DATA ]</h2>
-            <button onClick={onClose} className="p-1 border border-om-secondary text-om-secondary hover:text-om-primary hover:border-om-primary transition-colors">
-              <X size={20} />
-            </button>
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="glass-panel flex flex-col overflow-hidden relative"
+    >
+      <div className="p-4 border-b border-vercel-border flex items-center justify-between bg-[#141414]">
+        <h2 className="text-sm font-semibold text-white flex items-center gap-2">
+          <Info size={16} className="text-vercel-muted" /> Event Details
+        </h2>
+        <button onClick={onClose} className="p-1 text-vercel-muted hover:text-white transition-colors rounded hover:bg-vercel-border">
+          <X size={16} />
+        </button>
+      </div>
+
+      <div className="p-5 flex-1 overflow-y-auto">
+        <div className="mb-6">
+          <div className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-vercel-border text-white border border-[#333]">
+            {event.changeType.replace('_', ' ')}
           </div>
+        </div>
 
-          <div className="p-6 overflow-y-auto flex-1">
-            <div className="mb-8">
-              <p className="text-[10px] text-om-secondary mb-1"> TYPE</p>
-              <div className="inline-block px-3 py-1 bg-om-bg border border-om-primary text-sm font-bold text-om-primary shadow-glow">
-                {event.changeType.replace('_', ' ')}
-              </div>
-            </div>
+        <div className="mb-6">
+          <p className="text-xs text-vercel-muted font-medium mb-2 uppercase tracking-wider">Description</p>
+          <p className="text-sm text-vercel-text leading-relaxed">{event.description}</p>
+        </div>
 
-            <div className="mb-8">
-              <p className="text-[10px] text-om-secondary mb-1"> DESCRIPTION</p>
-              <p className="text-om-text border-l-2 border-om-secondary pl-3">{event.description}</p>
-            </div>
-
-            <div className="mb-8">
-              <p className="text-[10px] text-om-secondary mb-2"> JSON PAYLOAD</p>
-              <pre className="bg-om-bg p-4 border border-om-secondary text-[11px] text-om-primary font-mono overflow-x-auto shadow-inner">
-                {JSON.stringify(event.diff, null, 2)}
-              </pre>
-            </div>
-            
-            <div>
-              <p className="text-[10px] text-om-secondary mb-1"> TIMESTAMP</p>
-              <p className="text-sm text-om-text">{new Date(event.createdAt).toLocaleString()}</p>
-            </div>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+        <div className="mb-6">
+          <p className="text-xs text-vercel-muted font-medium mb-2 uppercase tracking-wider flex items-center gap-1">
+            <FileJson size={14} /> JSON Payload
+          </p>
+          <pre className="bg-[#050505] p-3 rounded-lg overflow-x-auto text-[11px] text-vercel-muted font-mono border border-vercel-border">
+            {JSON.stringify(event.diff, null, 2)}
+          </pre>
+        </div>
+        
+        <div className="mt-auto pt-4 border-t border-vercel-border/50">
+          <p className="text-xs text-vercel-muted flex items-center gap-1">
+            <Clock size={12} /> {new Date(event.createdAt).toLocaleString()}
+          </p>
+        </div>
+      </div>
+    </motion.div>
   );
 }

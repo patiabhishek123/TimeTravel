@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search } from 'lucide-react';
+import { Search, Database } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function DatasetView() {
@@ -16,38 +16,36 @@ export default function DatasetView() {
 
   return (
     <motion.div 
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="flex flex-col items-center justify-center min-h-[70vh] max-w-2xl mx-auto text-center"
+      className="flex flex-col items-center justify-center min-h-[70vh] max-w-2xl mx-auto text-center px-4"
     >
-      <div className="mb-12 relative w-full scanline-effect py-8 border-l-4 border-om-primary pl-4">
-        <motion.h1 
-          animate={{ x: [-2, 2, -1, 0] }}
-          transition={{ repeat: Infinity, duration: 0.2, repeatType: "mirror", repeatDelay: 3 }}
-          className="text-4xl md:text-5xl font-extrabold tracking-widest mb-4 relative z-10 text-om-primary uppercase drop-shadow-[0_0_10px_rgba(255,43,43,0.8)]"
-        >
-          [ METADATA // DEBUGGER ]
-        </motion.h1>
-        <p className="text-om-text text-lg relative z-10 tracking-widest uppercase opacity-80">
-          Initialize temporal scan & isolate anomalies.
+      <div className="mb-10 relative w-full flex flex-col items-center">
+        <div className="bg-vercel-panel p-3 rounded-2xl border border-vercel-border mb-6 shadow-soft">
+          <Database className="w-8 h-8 text-white" />
+        </div>
+        <h1 className="text-4xl md:text-5xl font-semibold tracking-tight mb-4 text-white">
+          Metadata Time-Travel
+        </h1>
+        <p className="text-vercel-muted text-lg">
+          Proactively debug broken pipelines by inspecting schema evolution and lineage changes.
         </p>
       </div>
       
-      <form onSubmit={handleSubmit} className="glass-panel p-8 w-full flex flex-col md:flex-row gap-4 relative z-10">
+      <form onSubmit={handleSubmit} className="w-full flex flex-col md:flex-row gap-3">
         <input 
           type="text" 
           value={datasetId} 
           onChange={e => setDatasetId(e.target.value)} 
-          placeholder="ENTER TARGET UUID..." 
-          className="flex-1 bg-om-bg border border-om-secondary px-4 py-3 text-om-text placeholder-om-secondary focus:outline-none focus:border-om-primary focus:shadow-glow transition-all uppercase tracking-widest"
+          placeholder="Enter Dataset UUID..." 
+          className="flex-1 bg-vercel-panel border border-vercel-border rounded-xl px-4 py-3 text-vercel-text placeholder-[#555] focus:outline-none focus:border-vercel-muted focus:ring-1 focus:ring-vercel-muted transition-all shadow-sm font-mono text-sm"
         />
-        <motion.button 
-          whileHover={{ scale: 1.02, x: [0, -2, 2, 0] }}
+        <button 
           type="submit" 
-          className="bg-om-secondary hover:bg-om-primary text-om-text font-bold px-8 py-3 flex items-center justify-center gap-2 border-r-4 border-om-primary transition-all uppercase tracking-widest"
+          className="bg-white hover:bg-gray-200 text-black font-medium px-6 py-3 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-sm"
         >
-          <Search size={18} /> INITIATE
-        </motion.button>
+          <Search size={18} /> Investigate
+        </button>
       </form>
     </motion.div>
   );
