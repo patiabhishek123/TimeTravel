@@ -10,39 +10,39 @@ interface Props {
 
 export default function DatasetHeader({ datasetId, totalSnapshots, totalChanges, lastUpdated }: Props) {
   return (
-    <div className="glass-panel p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+    <div className="glass-panel p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 relative z-10">
       <div>
         <div className="flex items-center gap-3 mb-2">
-          <div className="bg-slate-800 p-2 rounded-lg border border-slate-700">
-            <Database className="text-om-lineage w-6 h-6" />
+          <div className="bg-om-secondary p-2 border-l-2 border-om-primary">
+            <Database className="text-om-text w-6 h-6" />
           </div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Dataset Explorer</h1>
+          <h1 className="text-2xl font-bold text-om-primary tracking-widest">[ DATASET EXPLORER ]</h1>
         </div>
-        <p className="text-slate-400 font-mono text-xs">ID: {datasetId}</p>
+        <p className="text-om-text font-mono text-xs opacity-80 pl-2 border-l-2 border-om-secondary">ID: {datasetId}</p>
       </div>
 
       <div className="flex flex-wrap gap-4">
-        <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700 flex items-center gap-3">
-          <Clock className="text-slate-400 w-5 h-5" />
+        <div className="bg-om-bg p-3 border-l-2 border-om-primary flex items-center gap-3">
+          <Clock className="text-om-primary w-5 h-5" />
           <div>
-            <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider">Last Updated</p>
-            <p className="text-sm text-slate-200 font-medium">{new Date(lastUpdated).toLocaleString()}</p>
+            <p className="text-xs text-om-secondary font-bold uppercase tracking-wider">LAST UPDATED</p>
+            <p className="text-sm text-om-text font-medium">{new Date(lastUpdated).toLocaleString()}</p>
           </div>
         </div>
         
-        <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700 flex items-center gap-3">
-          <FileText className="text-slate-400 w-5 h-5" />
+        <div className="bg-om-bg p-3 border-l-2 border-om-primary flex items-center gap-3">
+          <FileText className="text-om-primary w-5 h-5" />
           <div>
-            <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider">Snapshots</p>
-            <p className="text-sm text-slate-200 font-medium">{totalSnapshots}</p>
+            <p className="text-xs text-om-secondary font-bold uppercase tracking-wider">SNAPSHOTS</p>
+            <p className="text-sm text-om-text font-medium">{totalSnapshots}</p>
           </div>
         </div>
 
-        <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700 flex items-center gap-3">
-          <Activity className="text-slate-400 w-5 h-5" />
+        <div className="bg-om-bg p-3 border-l-2 border-om-primary flex items-center gap-3">
+          <Activity className="text-om-primary w-5 h-5" />
           <div>
-            <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider">Total Changes</p>
-            <p className="text-sm text-slate-200 font-medium">{totalChanges}</p>
+            <p className="text-xs text-om-secondary font-bold uppercase tracking-wider">TOTAL CHANGES</p>
+            <p className="text-sm text-om-text font-medium">{totalChanges}</p>
           </div>
         </div>
       </div>

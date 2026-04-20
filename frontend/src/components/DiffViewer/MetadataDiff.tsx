@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { MetadataSnapshot } from '../../types';
+import { motion } from 'framer-motion';
 
 interface Props {
   currentSnapshot: MetadataSnapshot;
@@ -43,38 +44,43 @@ export default function MetadataDiff({ currentSnapshot, previousSnapshot }: Prop
   }, [currentSnapshot, previousSnapshot]);
 
   const renderPanel = (title: string, view: { line: string, status: string }[], type: 'prev' | 'curr') => (
-    <div className="flex-1 bg-slate-950/50 rounded-lg border border-slate-800 overflow-hidden flex flex-col">
-      <div className="bg-slate-900 px-4 py-2 border-b border-slate-800 text-xs font-semibold text-slate-400 uppercase tracking-wider flex justify-between">
-        <span>{title}</span>
-        <span className={type === 'prev' ? 'text-om-removed' : 'text-om-added'}>
-          {type === 'prev' ? 'Previous Snapshot' : 'Current Snapshot'}
+    <div className="flex-1 bg-om-bg border-2 border-om-secondary overflow-hidden flex flex-col scanline-effect relative">
+      <div className="bg-om-secondary px-4 py-2 border-b-2 border-om-primary text-xs font-bold text-om-bg uppercase tracking-widest flex justify-between z-10">
+        <span>[{title}]</span>
+        <span className={type === 'prev' ? 'text-[#ffcccc]' : 'text-[#ccffcc]'}>
+          {type === 'prev' ? 'SYS.PREV_STATE' : 'SYS.CURR_STATE'}
         </span>
       </div>
-      <div className="p-4 overflow-auto custom-scrollbar flex-1 font-mono text-[11px] md:text-xs leading-relaxed">
+      <motion.div 
+        animate={{ opacity: [1, 0.8, 1, 0.9, 1] }}
+        transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
+        className="p-4 overflow-auto custom-scrollbar flex-1 font-mono text-[11px] md:text-xs leading-relaxed z-10"
+      >
         {view.map((item, i) => {
           let bg = 'bg-transparent';
-          let text = 'text-slate-300';
-          if (item.status === 'added') { bg = 'bg-om-added/20'; text = 'text-om-added'; }
-          if (item.status === 'removed') { bg = 'bg-om-removed/20'; text = 'text-om-removed'; }
-          if (item.status === 'changed') { bg = 'bg-om-schema/20'; text = 'text-om-schema'; }
+          let text = 'text-om-text opacity-70';
+          let border = 'border-transparent';
+          if (item.status === 'added') { bg = 'bg-om-added/30'; text = 'text-[#00ff00] font-bold'; border = 'border-[#00ff00]'; }
+          if (item.status === 'removed') { bg = 'bg-om-removed/40'; text = 'text-om-primary font-bold'; border = 'border-om-primary'; }
+          if (item.status === 'changed') { bg = 'bg-om-secondary/40'; text = 'text-om-primary font-bold'; border = 'border-om-primary'; }
           
           return (
-            <div key={i} className={`px-2 py-0.5 whitespace-pre ${bg} ${text} hover:bg-slate-800 transition-colors`}>
+            <div key={i} className={`px-2 py-0.5 whitespace-pre ${bg} ${text} border-l-2 ${border} hover:bg-om-secondary/20 transition-colors`}>
               {item.line}
             </div>
           );
         })}
-      </div>
+      </motion.div>
     </div>
   );
 
   return (
-    <div className="glass-panel p-6 flex flex-col h-[600px]">
-      <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-6">Split-Screen Metadata Diff</h3>
+    <div className="glass-panel p-6 flex flex-col h-[600px] border-r-0 border-b-4 border-b-om-primary">
+      <h3 className="text-sm font-bold text-om-primary tracking-widest mb-6">[ DIFF VIEWER TERMINAL ]</h3>
       
       <div className="flex-1 flex gap-4 overflow-hidden">
-        {renderPanel('State', diffs.columns.oldView, 'prev')}
-        {renderPanel('State', diffs.columns.newView, 'curr')}
+        {renderPanel('METADATA.COLUMNS', diffs.columns.oldView, 'prev')}
+        {renderPanel('METADATA.COLUMNS', diffs.columns.newView, 'curr')}
       </div>
     </div>
   );

@@ -45,7 +45,7 @@ export default function TimelineView() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-12 h-12 border-4 border-slate-700 border-t-om-lineage rounded-full animate-spin"></div>
+        <div className="w-12 h-12 border-4 border-om-secondary border-t-om-primary rounded-none animate-spin shadow-glow"></div>
       </div>
     );
   }
@@ -57,13 +57,13 @@ export default function TimelineView() {
   const lastUpdated = snapshots[snapshots.length - 1]?.createdAt || new Date().toISOString();
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative pb-20">
-      <div className="flex items-center justify-between mb-6">
-        <Link to="/" className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors bg-slate-800/50 px-4 py-2 rounded-lg border border-slate-700 hover:bg-slate-700">
-          <ArrowLeft size={16} /> Back to Search
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative pb-20 scanline-effect min-h-screen">
+      <div className="flex items-center justify-between mb-8 relative z-10">
+        <Link to="/" className="flex items-center gap-2 text-om-text hover:text-white bg-om-bg px-4 py-2 border-l-4 border-om-primary hover:bg-om-secondary transition-all">
+          <ArrowLeft size={16} /> [ ABORT ]
         </Link>
-        <button onClick={handleSimulateSnapshot} className="flex items-center gap-2 text-white bg-slate-800 px-4 py-2 rounded-lg border border-slate-700 hover:bg-slate-700 transition-colors">
-          <RefreshCw size={16} /> Trigger Snapshot
+        <button onClick={handleSimulateSnapshot} className="flex items-center gap-2 text-om-text bg-om-secondary px-4 py-2 border-r-4 border-om-primary hover:bg-om-primary transition-all">
+          <RefreshCw size={16} /> [ TRIGGER SIMULATION ]
         </button>
       </div>
 
@@ -84,7 +84,7 @@ export default function TimelineView() {
             onSelectEvent={setSelectedEvent}
           />
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
             <div className="lg:col-span-2">
               <MetadataDiff 
                 currentSnapshot={currentSnapshot} 
@@ -97,8 +97,8 @@ export default function TimelineView() {
           </div>
         </>
       ) : (
-        <div className="glass-panel p-12 text-center">
-          <p className="text-slate-400">No snapshots found for this dataset.</p>
+        <div className="glass-panel p-12 text-center mt-12">
+          <p className="text-om-primary text-xl">ERR: NO SNAPSHOTS FOUND FOR GIVEN UUID.</p>
         </div>
       )}
 

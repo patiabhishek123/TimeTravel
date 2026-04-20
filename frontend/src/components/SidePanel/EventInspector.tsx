@@ -13,42 +13,42 @@ export default function EventInspector({ event, onClose }: Props) {
     <AnimatePresence>
       {event && (
         <motion.div
-          initial={{ x: '100%', opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: '100%', opacity: 0 }}
-          transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
-          className="fixed top-0 right-0 h-full w-96 glass-panel rounded-none border-y-0 border-r-0 z-50 flex flex-col shadow-2xl"
+          initial={{ x: '100%' }}
+          animate={{ x: 0 }}
+          exit={{ x: '100%' }}
+          transition={{ ease: "linear", duration: 0.15 }}
+          className="fixed top-0 right-0 h-full w-96 bg-[#0f0f0f] border-l-4 border-om-primary z-50 flex flex-col shadow-[-10px_0_20px_rgba(255,43,43,0.15)] uppercase tracking-widest scanline-effect"
         >
-          <div className="p-4 border-b border-slate-700/50 flex items-center justify-between">
-            <h2 className="text-lg font-bold text-om-schema">Event Inspector</h2>
-            <button onClick={onClose} className="p-1 hover:bg-slate-800 rounded text-slate-400 hover:text-white transition-colors">
+          <div className="p-4 border-b-2 border-om-secondary flex items-center justify-between bg-om-bg">
+            <h2 className="text-lg font-bold text-om-primary">[ EVENT DATA ]</h2>
+            <button onClick={onClose} className="p-1 border border-om-secondary text-om-secondary hover:text-om-primary hover:border-om-primary transition-colors">
               <X size={20} />
             </button>
           </div>
 
           <div className="p-6 overflow-y-auto flex-1">
-            <div className="mb-6">
-              <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Type</p>
-              <div className="inline-block px-3 py-1 bg-slate-800 border border-slate-600 rounded text-sm font-semibold text-white">
+            <div className="mb-8">
+              <p className="text-[10px] text-om-secondary mb-1"> TYPE</p>
+              <div className="inline-block px-3 py-1 bg-om-bg border border-om-primary text-sm font-bold text-om-primary shadow-glow">
                 {event.changeType.replace('_', ' ')}
               </div>
             </div>
 
-            <div className="mb-6">
-              <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Description</p>
-              <p className="text-slate-200">{event.description}</p>
+            <div className="mb-8">
+              <p className="text-[10px] text-om-secondary mb-1"> DESCRIPTION</p>
+              <p className="text-om-text border-l-2 border-om-secondary pl-3">{event.description}</p>
             </div>
 
-            <div className="mb-6">
-              <p className="text-xs text-slate-500 uppercase tracking-wider mb-2">JSON Diff Payload</p>
-              <pre className="bg-slate-950 p-4 rounded-lg overflow-x-auto text-xs text-slate-300 font-mono border border-slate-800">
+            <div className="mb-8">
+              <p className="text-[10px] text-om-secondary mb-2"> JSON PAYLOAD</p>
+              <pre className="bg-om-bg p-4 border border-om-secondary text-[11px] text-om-primary font-mono overflow-x-auto shadow-inner">
                 {JSON.stringify(event.diff, null, 2)}
               </pre>
             </div>
             
             <div>
-              <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Timestamp</p>
-              <p className="text-sm text-slate-400">{new Date(event.createdAt).toLocaleString()}</p>
+              <p className="text-[10px] text-om-secondary mb-1"> TIMESTAMP</p>
+              <p className="text-sm text-om-text">{new Date(event.createdAt).toLocaleString()}</p>
             </div>
           </div>
         </motion.div>
