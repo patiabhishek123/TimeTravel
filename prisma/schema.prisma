@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Dataset {
+  id          String                @id @default(uuid())
+  name        String
+  description String?
+  snapshots   MetadataSnapshot[]
+  events      MetadataChangeEvent[]
+}
+
+model MetadataSnapshot {
+  id        String                @id @default(uuid())
+  datasetId String
+  dataset   Dataset               @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+  schema    Json
+  columns   Json
+  lineage   Json
+  createdAt DateTime              @default(now())
+  events    MetadataChangeEvent[]
+}
+
+enum ChangeType {
+  SCHEMA_CHANGE
+  COLUMN_ADDED
+  COLUMN_REMOVED
+  LINEAGE_CHANGE
+}
+
+model MetadataChangeEvent {
+  id          String           @id @default(uuid())
+  datasetId   String
+  dataset     Dataset          @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+  snapshotId  String
+  snapshot    MetadataSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+  changeType  ChangeType
+  description String
+  diff        Json
+  createdAt   DateTime         @default(now())
+}
