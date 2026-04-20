@@ -6,6 +6,7 @@ import DatasetHeader from '../components/Header/DatasetHeader';
 import TimelineSlider from '../components/Timeline/TimelineSlider';
 import EventInspector from '../components/SidePanel/EventInspector';
 import MetadataDiff from '../components/DiffViewer/MetadataDiff';
+import LineagePanel from '../components/LineageViewer/LineagePanel';
 import RootCausePanel from '../components/RootCausePanel/RootCausePanel';
 import { ArrowLeft, RefreshCw } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -92,6 +93,11 @@ export default function TimelineView() {
                 <MetadataDiff 
                   currentSnapshot={currentSnapshot} 
                   previousSnapshot={prevSnapshot} 
+                />
+                <LineagePanel
+                  datasetName={id || ''}
+                  currentSnapshot={currentSnapshot}
+                  previousSnapshot={prevSnapshot}
                 />
               </div>
               <div className="lg:col-span-4 flex flex-col gap-6">
