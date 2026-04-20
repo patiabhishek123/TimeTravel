@@ -8,14 +8,23 @@ import { ChangeType } from '@prisma/client';
  * @param datasetName Name of the dataset
  * @returns The newly created MetadataSnapshot
  */
-export const createSnapshot = async (datasetName: string) => {
-  // 1. Fetch metadata using the OpenMetadata service
-  const metadata = await fetchDatasetMetadata(datasetName);
+export const createSnapshot = async (datasetIdOrName: string) => {
+  // Check if it's an existing dataset ID first
+  let dataset = await prisma.dataset.findUnique({
+    where: { id: datasetIdOrName }
+  }).catch(() => null);
 
-  // Ensure dataset exists in our local database
-  let dataset = await prisma.dataset.findFirst({
-    where: { name: datasetName }
-  });
+  // Fallback to finding by name if not found by ID
+  if (!dataset) {
+    dataset = await prisma.dataset.findFirst({
+      where: { name: datasetIdOrName }
+    });
+  }
+
+  // 1. Fetch metadata using the OpenMetadata service
+  // Use the actual name of the dataset if we found it, otherwise use the provided string
+  const datasetName = dataset ? dataset.name : datasetIdOrName;
+  const metadata = await fetchDatasetMetadata(datasetName);
 
   if (!dataset) {
     dataset = await prisma.dataset.create({
