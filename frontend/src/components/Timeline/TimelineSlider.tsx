@@ -60,7 +60,7 @@ export default function TimelineSlider({ snapshots, currentSnapshotIndex, onSele
                       className={`w-3.5 h-3.5 rounded-full z-10 transition-colors duration-200 shadow-sm ${isActive ? 'bg-white border-2 border-[#0A0A0A]' : 'bg-vercel-border border-2 border-[#0A0A0A] group-hover:bg-vercel-muted'}`}
                     />
                     <span className={`absolute top-full mt-2 text-[10px] font-medium whitespace-nowrap ${isCurrent ? 'text-white' : 'text-vercel-muted'}`}>
-                      {new Date(snapshot.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                      {new Date(snapshot.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second: '2-digit'})}
                     </span>
                   </motion.div>
 
