@@ -1,4 +1,4 @@
-# ⏳ Metadata Time-Travel
+# ⏳ Time Travel
 
 **Proactively debug broken data pipelines by inspecting schema evolution and lineage changes over time.**
 

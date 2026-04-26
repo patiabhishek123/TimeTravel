@@ -56,7 +56,7 @@ export default function DatasetView() {
           <span className="text-[10px] text-vercel-muted font-mono tracking-widest uppercase px-2">Powered by OpenMetadata</span>
         </div>
         <h1 className="text-4xl md:text-5xl font-semibold tracking-tight mb-4 text-white">
-          Metadata Time-Travel
+          Time Travel
         </h1>
         <p className="text-vercel-muted text-lg">
           Proactively debug broken pipelines by inspecting schema evolution and lineage changes.
