@@ -4,6 +4,7 @@ import { Search } from 'lucide-react';
 import { motion } from 'framer-motion';
 import axios from 'axios';
 import Logo from '../components/Logo';
+import ParticlesBackground from '../components/ParticlesBackground';
 
 interface Dataset {
   id: string;
@@ -42,11 +43,13 @@ export default function DatasetView() {
   };
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="flex flex-col items-center justify-center min-h-[70vh] max-w-2xl mx-auto text-center px-4"
-    >
+    <>
+      <ParticlesBackground />
+      <motion.div 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col items-center justify-center min-h-[70vh] max-w-2xl mx-auto text-center px-4"
+      >
       <div className="mb-10 relative w-full flex flex-col items-center">
         <div className="bg-vercel-panel p-4 rounded-2xl border border-vercel-border mb-6 shadow-soft flex flex-col items-center">
           <Logo className="w-10 h-10 text-white mb-3 drop-shadow-md" />
@@ -95,5 +98,6 @@ export default function DatasetView() {
         </button>
       </form>
     </motion.div>
+    </>
   );
 }
