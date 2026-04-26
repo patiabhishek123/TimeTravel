@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Database } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { motion } from 'framer-motion';
 import axios from 'axios';
+import Logo from '../components/Logo';
 
 interface Dataset {
   id: string;
@@ -48,7 +49,7 @@ export default function DatasetView() {
     >
       <div className="mb-10 relative w-full flex flex-col items-center">
         <div className="bg-vercel-panel p-4 rounded-2xl border border-vercel-border mb-6 shadow-soft flex flex-col items-center">
-          <Database className="w-8 h-8 text-white mb-3" />
+          <Logo className="w-10 h-10 text-white mb-3 drop-shadow-md" />
           <span className="text-[10px] text-vercel-muted font-mono tracking-widest uppercase px-2">Powered by OpenMetadata</span>
         </div>
         <h1 className="text-4xl md:text-5xl font-semibold tracking-tight mb-4 text-white">

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Database, Clock, Activity, FileText } from 'lucide-react';
+import { Clock, Activity, FileText } from 'lucide-react';
+import Logo from '../Logo';
 
 interface Props {
   datasetId: string;
@@ -14,7 +15,7 @@ export default function DatasetHeader({ datasetId, totalSnapshots, totalChanges,
       <div>
         <div className="flex items-center gap-3 mb-1">
           <div className="bg-vercel-panel p-2 rounded-lg border border-vercel-border shadow-sm">
-            <Database className="text-vercel-text w-5 h-5" />
+            <Logo className="text-white w-5 h-5" />
           </div>
           <h1 className="text-xl font-semibold text-white tracking-tight">Dataset Explorer</h1>
         </div>
