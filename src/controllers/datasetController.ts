@@ -4,6 +4,19 @@ import { analyzeRootCause } from '../services/rootCauseService';
 import { OpenMetadataService } from '../services/openMetadataService';
 import prisma from '../utils/prisma';
 
+const isUUID = (str: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
+
+const resolveDatasetId = async (idOrName: string) => {
+  let dataset = null;
+  if (isUUID(idOrName)) {
+    dataset = await prisma.dataset.findUnique({ where: { id: idOrName } }).catch(() => null);
+  }
+  if (!dataset) {
+    dataset = await prisma.dataset.findFirst({ where: { name: idOrName } });
+  }
+  return dataset?.id;
+};
+
 export const listDatasets = async (req: Request, res: Response) => {
   try {
     const datasets = await OpenMetadataService.listDatasets();
@@ -13,7 +26,6 @@ export const listDatasets = async (req: Request, res: Response) => {
     });
   } catch (error: any) {
     console.warn(`[Controller] OpenMetadata API unavailable. Falling back to local demo list.`);
-    // Fallback dummy dataset list
     return res.status(200).json({
       message: 'Fallback datasets fetched successfully',
       data: [
@@ -48,16 +60,17 @@ export const triggerSnapshot = async (req: Request, res: Response) => {
 };
 
 export const getDatasetTimeline = async (req: Request, res: Response) => {
-  const datasetId = req.params.datasetId as string;
+  const datasetParam = req.params.datasetId as string;
 
   try {
-    if (!datasetId) {
-      return res.status(400).json({ error: 'datasetId parameter is required' });
-    }
+    if (!datasetParam) return res.status(400).json({ error: 'datasetId parameter is required' });
+
+    const datasetId = await resolveDatasetId(datasetParam);
+    if (!datasetId) return res.status(404).json({ error: 'Dataset not found' });
 
     const events = await prisma.metadataChangeEvent.findMany({
       where: { datasetId },
-      orderBy: { createdAt: 'desc' }, // Latest first for timeline
+      orderBy: { createdAt: 'desc' }, 
     });
 
     return res.status(200).json({
@@ -74,18 +87,19 @@ export const getDatasetTimeline = async (req: Request, res: Response) => {
 };
 
 export const getDatasetSnapshots = async (req: Request, res: Response) => {
-  const datasetId = req.params.datasetId as string;
+  const datasetParam = req.params.datasetId as string;
 
   try {
-    if (!datasetId) {
-      return res.status(400).json({ error: 'datasetId parameter is required' });
-    }
+    if (!datasetParam) return res.status(400).json({ error: 'datasetId parameter is required' });
+
+    const datasetId = await resolveDatasetId(datasetParam);
+    if (!datasetId) return res.status(404).json({ error: 'Dataset not found' });
 
     const snapshots = await prisma.metadataSnapshot.findMany({
       where: { datasetId },
-      orderBy: { createdAt: 'desc' }, // Latest first
+      orderBy: { createdAt: 'desc' }, 
       include: {
-        events: true, // optionally include events tied to each snapshot
+        events: true, 
       }
     });
 
@@ -103,12 +117,13 @@ export const getDatasetSnapshots = async (req: Request, res: Response) => {
 };
 
 export const getRootCauseAnalysis = async (req: Request, res: Response) => {
-  const datasetId = req.params.datasetId as string;
+  const datasetParam = req.params.datasetId as string;
 
   try {
-    if (!datasetId) {
-      return res.status(400).json({ error: 'datasetId parameter is required' });
-    }
+    if (!datasetParam) return res.status(400).json({ error: 'datasetId parameter is required' });
+
+    const datasetId = await resolveDatasetId(datasetParam);
+    if (!datasetId) return res.status(404).json({ error: 'Dataset not found' });
 
     const analysis = await analyzeRootCause(datasetId);
 

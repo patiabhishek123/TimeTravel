@@ -2,6 +2,8 @@ import prisma from '../utils/prisma';
 import { OpenMetadataService } from './openMetadataService';
 import { ChangeType } from '@prisma/client';
 
+const isUUID = (str: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
+
 /**
  * Creates a new metadata snapshot for a dataset and detects changes.
  * 
@@ -9,10 +11,11 @@ import { ChangeType } from '@prisma/client';
  * @returns The newly created MetadataSnapshot
  */
 export const createSnapshot = async (datasetIdOrName: string) => {
-  // Check if it's an existing dataset ID first
-  let dataset = await prisma.dataset.findUnique({
-    where: { id: datasetIdOrName }
-  }).catch(() => null);
+  let dataset = null;
+  
+  if (isUUID(datasetIdOrName)) {
+    dataset = await prisma.dataset.findUnique({ where: { id: datasetIdOrName } }).catch(() => null);
+  }
 
   // Fallback to finding by name if not found by ID
   if (!dataset) {

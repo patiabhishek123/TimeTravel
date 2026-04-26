@@ -63,14 +63,14 @@ export default function DatasetView() {
       <form onSubmit={handleSubmit} className="w-full flex flex-col md:flex-row gap-3 relative">
         <div className="flex-1 relative">
           {loading ? (
-            <div className="w-full bg-vercel-panel border border-vercel-border rounded-xl px-4 py-3 flex items-center justify-center">
-              <div className="w-4 h-4 border-2 border-vercel-border border-t-white rounded-full animate-spin"></div>
+            <div className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 flex items-center justify-center">
+              <div className="w-4 h-4 border-2 border-gray-300 border-t-black rounded-full animate-spin"></div>
             </div>
           ) : (
             <select 
               value={datasetName} 
               onChange={e => setDatasetName(e.target.value)} 
-              className="w-full bg-vercel-panel border border-vercel-border rounded-xl px-4 py-3 text-vercel-text focus:outline-none focus:border-vercel-muted focus:ring-1 focus:ring-vercel-muted transition-all shadow-sm font-mono text-sm appearance-none cursor-pointer"
+              className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-black focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all shadow-sm font-mono text-sm appearance-none cursor-pointer"
             >
               {datasets.map(ds => (
                 <option key={ds.id} value={ds.fullyQualifiedName || ds.name}>
@@ -80,7 +80,7 @@ export default function DatasetView() {
             </select>
           )}
           {!loading && (
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-vercel-muted text-xs">
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500 text-xs">
               ▼
             </div>
           )}
