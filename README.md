@@ -28,7 +28,7 @@ Using a sleek, Vercel/Linear-inspired UI, data engineers can scrub through a tim
 ## 💻 Deployment & Usage
 
 ### Option A: Run via Docker (Recommended for Users)
-The easiest way for other data teams to use TimeRoot is by pulling the repository and running it via Docker Compose.
+The easiest way for other data teams to use TimeTravel is by pulling the repository and running it via Docker Compose.
 
 1. **Clone the repository:**
    ```bash
