@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: metadata
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: .
+    environment:
+      DATABASE_URL: "postgresql://postgres:postgres@db:5432/metadata?schema=public"
+      PORT: 3000
+      OPENMETADATA_API_URL: ${OPENMETADATA_API_URL:-http://host.docker.internal:8585/api/v1}
+      OPENMETADATA_JWT_TOKEN: ${OPENMETADATA_JWT_TOKEN:-dummy_token}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    # Run prisma db push before starting the application
+    command: sh -c "npx prisma db push && npm run start"
+
+  frontend:
+    build: 
+      context: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

@@ -25,45 +25,56 @@ Using a sleek, Vercel/Linear-inspired UI, data engineers can scrub through a tim
 - **Database (Snapshot Storage):** PostgreSQL, Prisma ORM.
 - **Integration:** OpenMetadata REST API.
 
-## 💻 Running Locally
+## 💻 Deployment & Usage
 
-### Prerequisites
-- Node.js (v18+)
-- PostgreSQL (running locally on port 5434, or update the `DATABASE_URL`)
+### Option A: Run via Docker (Recommended for Users)
+The easiest way for other data teams to use TimeRoot is by pulling the repository and running it via Docker Compose.
 
-### 1. Clone & Install
-```bash
-git clone https://github.com/patiabhishek123/TimeRoot.git
-cd TimeRoot
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/patiabhishek123/TimeRoot.git
+   cd TimeRoot
+   ```
 
-# Install backend dependencies
-npm install
+2. **Configure your OpenMetadata Instance:**
+   Open the `docker-compose.yml` file and update the `OPENMETADATA_API_URL` and `OPENMETADATA_JWT_TOKEN` under the `backend` environment variables to point to your company's OM instance.
 
-# Install frontend dependencies
-cd frontend
-npm install
-cd ..
-```
+3. **Spin up the stack:**
+   ```bash
+   docker compose up -d
+   ```
+   This will automatically:
+   - Spin up a PostgreSQL database
+   - Push the Prisma schema
+   - Build and start the Node.js Backend API
+   - Build and serve the React Frontend via Nginx on port `8080`
 
-### 2. Configure Environment variables
-Create a `.env` file in the root directory:
-```env
-DATABASE_URL="postgresql://postgres:postgres@localhost:5434/metadata?schema=public"
-OPENMETADATA_API_URL="http://localhost:8585/api/v1"
-OPENMETADATA_JWT_TOKEN="your_jwt_token_here"
-```
+4. Open `http://localhost:8080` to explore!
 
-### 3. Run the App
-Start both the frontend and backend concurrently:
+### Option B: Run Locally (For Developers)
 
-**Backend:**
-```bash
-npm run dev
-```
+**Prerequisites:** Node.js (v18+) and PostgreSQL (port 5434).
 
-**Frontend:**
-```bash
-cd frontend
-npm run dev
-```
-Open `http://localhost:5173` to explore!
+1. **Install dependencies:**
+   ```bash
+   npm install
+   cd frontend && npm install && cd ..
+   ```
+
+2. **Configure Environment:** Create a `.env` in the root:
+   ```env
+   DATABASE_URL="postgresql://postgres:postgres@localhost:5434/metadata?schema=public"
+   OPENMETADATA_API_URL="http://localhost:8585/api/v1"
+   OPENMETADATA_JWT_TOKEN="your_jwt_token_here"
+   ```
+
+3. **Start the app:**
+   ```bash
+   # Terminal 1 (Backend)
+   npm run dev
+
+   # Terminal 2 (Frontend)
+   cd frontend
+   npm run dev
+   ```
+   Open `http://localhost:5173` to explore!
