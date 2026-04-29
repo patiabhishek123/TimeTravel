@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/Logo.png" alt="Time Travel Logo" width="1000" />
+</p>
+
 # ⏳ Time Travel
 
 **Proactively debug broken data pipelines by inspecting schema evolution and lineage changes over time.**
